@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Баланс аккаунта</title>
+    <link rel="stylesheet" href={{url_for("static", filename = "getaccountbalance.css")}}>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Баланс аккаунта: <span class="balance">{{ balance }}</span></h1>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>

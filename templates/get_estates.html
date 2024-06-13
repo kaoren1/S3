@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Просмотр недвижимости</title>
+    <link rel="stylesheet" href={{url_for("static", filename = "getestates.css")}}>
+</head>
+<body>
+    <h1 class="estates-title">Доступная недвижимость</h1>
+    <ul class="estates-list">
+        {% for estate in estates %}
+            <li class="estate-item">
+                ID: {{ estate.id }}<br>
+                Адрес: {{ estate.address }}<br>
+                Площадь: {{ estate.square }}<br>
+                Тип: {{ estate.type }}
+            </li>
+        {% endfor %}
+    </ul>
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+</body>
+</html>

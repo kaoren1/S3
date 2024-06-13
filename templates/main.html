@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Главная страница</title>
+    <link rel="stylesheet" href={{url_for("static", filename = "main.css")}}>
+</head>
+<body>
+    <h1 class="main-title">Добро пожаловать, {{ account }}!</h1>
+    <p class="main-text">Выберите действие:</p>
+    <form method="post" class="main-form">
+        <button type="submit" name="action" value="Создать недвижимость" class="main-button">Создать недвижимость</button><br>
+        <button type="submit" name="action" value="Создать объявление" class="main-button">Создать объявление</button><br>
+        <button type="submit" name="action" value="Изменить недвижимость" class="main-button">Изменить недвижимость</button><br>
+        <button type="submit" name="action" value="Изменить объявление" class="main-button">Изменить объявление</button><br>
+        <button type="submit" name="action" value="Купить недвижимость" class="main-button">Купить недвижимость</button><br>
+        <button type="submit" name="action" value="Вывести деньги" class="main-button">Вывести деньги</button><br>
+        <button type="submit" name="action" value="Пополнить баланс" class="main-button">Пополнить баланс</button><br>
+        <button type="submit" name="action" value="Просмотреть недвижимость" class="main-button">Просмотреть недвижимость</button><br>
+        <button type="submit" name="action" value="Просмотреть объявления" class="main-button">Просмотреть объявления</button><br>
+        <button type="submit" name="action" value="Проверить баланс контракта" class="main-button">Проверить баланс контракта</button><br>
+        <button type="submit" name="action" value="Проверить баланс аккаунта" class="main-button">Проверить баланс аккаунта</button><br>
+    </form>
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+</body>
+</html>

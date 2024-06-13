@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Вывод денег</title>
+    <link rel="stylesheet" href={{url_for("static", filename = "withdraw.css")}}>
+</head>
+<body>
+    <h1 class="withdraw-title">Вывести деньги</h1>
+    <form method="post" class="withdraw-form">
+        <input type="hidden" name="account" value="{{ account }}">
+        <label for="amount" class="withdraw-label">Сумма:</label><br>
+        <input type="number" id="amount" name="amount" class="withdraw-input"><br><br>
+        <button type="submit" name="action" value="Вывести" class="withdraw-button">Вывести</button>
+        <button type="submit" name="action" value="Назад" class="withdraw-button">Назад</button><br>
+    </form>
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Регистрация</title>
+    <link rel="stylesheet" href={{url_for("static", filename = "register.css")}}>
+</head>
+<body>
+    <h1 class="register-title">Регистрация</h1>
+    <form method="post" class="register-form">
+        <label for="password" class="register-label">Пароль:</label><br>
+        <input type="password" id="password" name="password" class="register-input"><br><br>
+        <button type="submit" name="action" value="Зарегистрироваться" class="register-button">Зарегистрироваться</button>
+        <button type="submit" name="action" value="Назад" class="register-button">Назад</button><br>
+    </form>
+</body>
+</html>

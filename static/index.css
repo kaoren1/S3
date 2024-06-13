@@ -1,0 +1,28 @@
+.index-title {
+    color: #333;
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+.index-text {
+    color: #666;
+    text-align: center;
+}
+
+.index-form {
+    display: flex;
+    justify-content: center;
+}
+
+.index-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.index-button:hover {
+    background-color: #007bff;
+    color: #fff;
+}

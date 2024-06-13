@@ -1,3 +1,7 @@
+from flask import Flask, render_template, request, redirect, url_for
+
+app = Flask(__name__)
+
 from web3 import Web3
 import re
 from web3.middleware import geth_poa_middleware
@@ -9,208 +13,310 @@ contract = w3.eth.contract(address=contract_address, abi=abi)
 account = ""
 
 def check(password):
-  if len(password) < 12:
-    return False
-  if not re.search(r"[A-Z]", password):
-    return False
-  if not re.search(r"[a-z]", password):
-    return False
-  if not re.search(r"[0-9]", password):
-    return False
-  if not re.search(r"[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]", password):
-    return False
-  if re.search(r"password123|qwerty123", password, re.IGNORECASE):
-    return False
-  return True
-
-def register():
-    try:
-        account_created = False
-        password = input("Введите пароль: ")
-        while not account_created:
-            if check(password):
-                account = w3.geth.personal.new_account(password)
-                w3.geth.personal.unlock_account("0x21a4B4Da72EAe9E579D8461aB4E729349B39c38C", "1")
-                w3.eth.send_transaction(
-                    {"to": account, "from": "0x21a4B4Da72EAe9E579D8461aB4E729349B39c38C", "value": 100000000000000000000000})
-                print(f"Публичный ключ: {account}")
-                account_created = True
-                break
-            else:
-                print("Пароль недостаточно надежный")
-                password = input("Введите пароль: ")
-    except Exception as e:
-        print("Ошибка регистрации: ", e)
-
-
-def authorize():
-    try:
-        global account
-        publicKey = input("Введите публичный ключ: ")
-        password = input("Введите пароль: ")
-        w3.geth.personal.unlock_account(publicKey, password)
-        account = publicKey
-        print("Авторизация успешна!\n")
-        return True
-    except Exception as e:
-        print("Ошибка авторизации. Проверьте публичный ключ и пароль." , e)
+    if len(password) < 12:
         return False
+    if not re.search(r"[A-Z]", password):
+        return False
+    if not re.search(r"[a-z]", password):
+        return False
+    if not re.search(r"[0-9]", password):
+        return False
+    if not re.search(r"[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]", password):
+        return False
+    if re.search(r"password123|qwerty123", password, re.IGNORECASE):
+        return False
+    return True
 
-def createEstate():
-    try:
-        address = input("Введите адрес: ")
-        square = int(input("Введите площадь: "))
-        type = int(input("Введите один из типо недвижимости:  1. House, 2. Flat, 3. Loft, 4. Dacha : "))
-        tx = contract.functions.createEstate(address, square, type).transact({
-            'from': account
-        })
-        print("Недвижимость успешно создана")
+@app.route("/", methods=["GET", "POST"])
+def index():
+    error_message = ""
+    if request.method == "POST":
+        if request.form["button"] == "Авторизация":
+            return redirect(url_for("login"))
+        elif request.form["button"] == "Регистрация":
+            return redirect(url_for("register"))
+    return render_template("index.html", error=error_message)
 
-    except Exception as e:
-        print("Ошибка создания недвижимости", e)
+# Страница регистрации
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    error_message = ""
+    if request.method == "POST":
+        password = request.form["password"]
+        if check(password):
+            try:
+                account = w3.geth.personal.new_account(password)
+                w3.geth.personal.unlock_account("0x21a4B4Da72EAe9E579D8461aB4E729349B39c38C", 1)
+                w3.eth.send_transaction({"to": account, "from": "0x21a4B4Da72EAe9E579D8461aB4E729349B39c38C", "value": 100000000000000000000000})
+                return render_template("success.html", account=account)
+            except Exception as e:
+                error_message = "Ошибка регистрации: " + str(e)
+        else:
+            error_message = "Пароль недостаточно надежный"
+    return render_template("register.html", error=error_message)
 
-def createAD():
-    try:
-        price = int(input("Введите цену: "))
-        idEstate = int(input("Введите номер недвижимости: "))
+# Страница авторизации
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error_message = ""
+    if request.method == "POST":
+        publicKey = request.form["publicKey"]
+        password = request.form["password"]
+        try:
+            w3.geth.personal.unlock_account(publicKey, password)
+            return redirect(url_for("main", account=publicKey))
+        except Exception as e:
+            error_message = "Ошибка авторизации: " + str(e)
+    return render_template("login.html", error=error_message)
 
-        contract.functions.createAd(price, idEstate).transact({
-            'from': account
-        })
-        print("Успешное создание объявления")
-    except Exception as e:
-        print("Ошибка добавления недвижимости: ", e)
-
-def changeEstate():
-    try:
-        idEstate = int(input("Введите номер недвижимости: "))
-        contract.functions.updateEstateActive(idEstate).transact({
-            'from': account
-        })
-        print("Объявление успешно обновлено")
-    except Exception as e:
-        print("Ошибка обновления недвижимости: ", e)
-
-def changeAD():
-    try:
-        idAD = int(input("Введите номер объявления: "))
-        contract.functions.updateAdType(idAD).transact({
-            'from': account
-        })
-        print("Успешное обновление объявления")
-    except Exception as e:
-        print("Ошибка обновления объявления: ", e)
-
-def buyEstate():
-    try:
-        idAD = int(input("Введите номер объявления: "))
-        contract.functions.buyEstate(idAD).transact({
-            'from': account
-        })
-        print("Недвижимость успешна куплена")
-    except Exception as e:
-        print("Ошибка покупки недвижимости: ", e)
-
-def withdraw():
-    try:
-        amount = int(input("Введите количество средств: "))
-        if(amount > 0) and (amount <= w3.eth.get_balance(contract_address)):
-            contract.functions.withdraw(amount).transact({
-            'from': account,
-            'value': amount
-            })
-        print("Деньги успешно выведены с баланса контракта")
-    except Exception as e:
-        print("Ошибка вывода средств: ", e)
-
-
-def pay():
-    try:
-        amount = int(input("Введите количество средств: "))
-        contract.functions.pay().transact({
-                'from': account,
-                'value': amount
-            })
-        print("Деньги есть")
-    except Exception as e:
-        print("Ошибка: ", e)
-
-def getEstates():
-    try:
-        available_estates = contract.functions.getAvailableEstates().call()
-        for estate in available_estates:
-            print(f"ID: {estate[5]}, Адрес: {estate[0]}, Площадь: {estate[1]}, Тип: {estate[2]}")
-    except Exception as e:
-        print("Ошибка получения информации о доступных недвижимостях: ", e)
-def getAD():
-    try:
-        open_ads = contract.functions.getOpenAdvertisements().call()
-        for ad in open_ads:
-            print(f"ID: {ad[1]}, Цена: {ad[0]}, Тип объявления: {ad[5]}")
-    except Exception as e:
-        print("Ошибка получения информации о текущих объявлениях: ", e)
-def getBalance(account):
-    try:
-        balance = contract.functions.balances(account).call()
-        print(f"Баланс на контракте для {account}: {balance}")
-    except Exception as e:
-        print("Ошибка получения баланса на контракте: ", e)
-def getAccountBalance(account):
-    try:
-        balance = w3.eth.get_balance(account)
-        print(f"Баланс на аккаунте {account}: {balance}")
-    except Exception as e:
-        print("Ошибка получения баланса на аккаунте: ", e)
-
+# Страница с основными действиями
+@app.route("/main", methods=["GET", "POST"])
 def main():
-    print("Выберите действие: \n1. Авторизация \n2. Регистрация \n3. Выход")
-    choise0 = int(input())
-    while choise0 != 3:
-        if (choise0 == 1):
-            if(authorize()):
-                print("Выберите действие: \n1. Создание недвижимости \n2. Создание объявления \n3. Измененее статуса недвижимости \n4. Изменение статуса объявления \n5. Покупка недвижимости \n6. Вывод средств \n7. Получение информации \n8. Пополнить баланс")
-                choise1 = int(input())
-                while choise1 != 9:
-                    match (choise1):
-                        case 1:
-                            createEstate()
-                        case 2:
-                            createAD()
-                        case 3:
-                            changeEstate()
-                        case 4:
-                            changeAD()
-                        case 5:
-                            buyEstate()
-                        case 6:
-                            withdraw()
-                        case 7:
-                            print("Выберите действие: \n1. Информация о доступных недвижимостях \n2. Информация о текущих объявлениях \n3. Информация о балансе на смарт-контркате \n4. Посмотреть баланс аккаунта")
-                            choise2 = int(input())
-                            match choise2:
-                                case 1:
-                                    getEstates()
-                                case 2:
-                                    getAD()
-                                case 3:
-                                    getBalance(account)
-                                case 4:
-                                    getAccountBalance(account)
-                        case 8:
-                            pay()
-                        case 9:
-                            exit(0)
-                    print("Выберите действие: \n1. Создание недвижимости \n2. Создание объявления \n3. Измененее статуса недвижимости \n4. Изменение статуса объявления \n5. Покупка недвижимости \n6. Вывод средств \n7. Получение информации \n8. Пополнить баланс")
-                    choise1 = int(input())
-        elif  (choise0 == 2):
-            register()
+    account = request.args.get("account")
+    error_message = ""
+    if request.method == "POST":
+        if request.form["action"] == "Создать недвижимость":
+            return redirect(url_for("create_estate", account=account))  # Передача ключа в create_estate
+        elif request.form["action"] == "Создать объявление":
+            return redirect(url_for("create_ad", account=account))  # Передача ключа в create_ad
+        elif request.form["action"] == "Изменить недвижимость":
+            return redirect(url_for("change_estate", account=account))  # Передача ключа в change_estate
+        elif request.form["action"] == "Изменить объявление":
+            return redirect(url_for("change_ad", account=account))  # Передача ключа в change_ad
+        elif request.form["action"] == "Купить недвижимость":
+            return redirect(url_for("buy_estate", account=account))  # Передача ключа в buy_estate
+        elif request.form["action"] == "Вывести деньги":
+            return redirect(url_for("withdraw", account=account))  # Передача ключа в withdraw
+        elif request.form["action"] == "Пополнить баланс":
+            return redirect(url_for("pay", account=account))  # Передача ключа в pay
+        elif request.form["action"] == "Просмотреть недвижимость":
+            return redirect(url_for("get_estates", account=account))  # Передача ключа в get_estates
+        elif request.form["action"] == "Просмотреть объявления":
+            return redirect(url_for("get_ad", account=account))  # Передача ключа в get_ad
+        elif request.form["action"] == "Проверить баланс контракта":
+            return redirect(url_for("get_balance", account=account))  # Передача ключа в get_balance
+        elif request.form["action"] == "Проверить баланс аккаунта":
+            return redirect(url_for("get_account_balance", account=account))  # Передача ключа в get_account_balance
+    return render_template("main.html", account=account, error=error_message)
+
+# Страница создания недвижимости
+@app.route("/create_estate", methods=["GET", "POST"])
+def create_estate():
+    account = request.args.get("account")  # Получение публичного ключа из URL
+    error_message = ""
+    if request.method == "POST":
+        if request.form["action"] == "Создать":
+            try:
+                address = request.form["address"]
+                square = int(request.form["square"])
+                type = int(request.form["type"])
+                tx = contract.functions.createEstate(address, square, type).transact({
+                    'from': account
+                })
+                error_message = "Недвижимость успешно создана"
+            except Exception as e:
+                error_message = "Ошибка создания недвижимости: " + str(e)
+        else:
+            if request.form["action"] == "Назад":
+                return redirect(url_for("main", account=account))
+    return render_template("create_estate.html", error=error_message)
+
+
+@app.route("/create_ad", methods=["GET", "POST"])
+def create_ad():
+    account = request.args.get("account")  # Получение публичного ключа из URL
+    error_message = ""
+    if request.method == "POST":
+        if request.form["action"] == "Создать":
+            try:
+               price = int(request.form["price"])
+               idEstate = int(request.form["idEstate"])
+               contract.functions.createAd(price, idEstate).transact({
+                   'from': account
+               })
+               error_message = "Успешное создание объявления"
+            except Exception as e:
+               error_message = "Ошибка добавления недвижимости: " + str(e)
+        else:
+            if request.form["action"] == "Назад":
+                return redirect(url_for("main", account=account))
+    return render_template("create_ad.html", error=error_message)
+
+# Страница изменения недвижимости
+@app.route("/change_estate", methods=["GET", "POST"])
+def change_estate():
+    account = request.args.get("account")  # Получение публичного ключа из URL
+    error_message = ""
+    if request.method == "POST":
+        if request.form["action"] == "Изменить":
+            try:
+                idEstate = int(request.form["idEstate"])
+                contract.functions.updateEstateActive(idEstate).transact({
+                    'from': account
+                })
+                error_message = "Объявление успешно обновлено"
+            except Exception as e:
+                error_message = "Ошибка обновления недвижимости: " + str(e)
+        else:
+            if request.form["action"] == "Назад":
+                return redirect(url_for("main", account=account))
+    return render_template("change_estate.html", error=error_message)
+
+# Страница изменения объявления
+@app.route("/change_ad", methods=["GET", "POST"])
+def change_ad():
+    account = request.args.get("account")  # Получение публичного ключа из URL
+    error_message = ""
+    if request.method == "POST":
+        if request.form["action"] == "Изменить":
+            try:
+                idAD = int(request.form["idAD"])
+                contract.functions.updateAdType(idAD).transact({
+                    'from': account
+                })
+                error_message = "Успешное обновление объявления"
+            except Exception as e:
+                error_message = "Ошибка обновления объявления: " + str(e)
+        else:
+            if request.form["action"] == "Назад":
+                return redirect(url_for("main", account=account))
+    return render_template("change_ad.html", error=error_message)
+
+# Страница покупки недвижимости
+@app.route("/buy_estate", methods=["GET", "POST"])
+def buy_estate():
+    account = request.args.get("account")  # Получение публичного ключа из URL
+    error_message = ""
+    if request.method == "POST":
+        if request.form["action"] == "Купить":
+            try:
+                idAD = int(request.form["idAD"])
+                contract.functions.buyEstate(idAD).transact({
+                    'from': account
+                })
+                error_message = "Недвижимость успешна куплена"
+            except Exception as e:
+                error_message = "Ошибка покупки недвижимости: " + str(e)
+        else:
+            if request.form["action"] == "Назад":
+                return redirect(url_for("main", account=account))
+    return render_template("buy_estate.html", error=error_message)
+
+# Страница вывода денег
+@app.route("/withdraw", methods=["GET", "POST"])
+def withdraw():
+    account = request.args.get("account")  # Получение публичного ключа из URL
+    error_message = ""
+    if request.method == "POST":
+        if request.form["action"] == "Вывести":
+            try:
+                amount = int(request.form["amount"])
+                if amount > 0 and amount <= w3.eth.get_balance(contract_address):
+                    contract.functions.withdraw(amount).transact({
+                        'from': account,
+                        'value': amount
+                    })
+                    error_message = "Деньги успешно выведены с баланса контракта"
+                else:
+                    error_message = "Некорректная сумма для вывода"
+            except Exception as e:
+                error_message = "Ошибка вывода средств: " + str(e)
+        else:
+            if request.form["action"] == "Назад":
+                return redirect(url_for("main", account=account))
+    return render_template("withdraw.html", error=error_message)
+
+# Страница пополнения баланса
+@app.route("/pay", methods=["GET", "POST"])
+def pay():
+    account = request.args.get("account")  # Получение публичного ключа из URL
+    error_message = ""
+    if request.method == "POST":
+        if request.form["action"] == "Пополнить":
+            try:
+                amount = int(request.form["amount"])
+                contract.functions.pay().transact({
+                    'from': account,
+                    'value': amount
+                })
+                error_message = "Деньги есть"
+            except Exception as e:
+                error_message = "Ошибка: " + str(e)
+        else:
+            if request.form["action"] == "Назад":
+                return redirect(url_for("main", account=account))
+    return render_template("pay.html", error=error_message)
+
+# Страница просмотра недвижимости
+@app.route("/get_estates")
+def get_estates():
+    account = request.args.get("account")  # Получение публичного ключа из URL
+    error_message = ""
+    try:
+        available_estates = contract.functions.getEstates().call()  # Вызов функции из контракта
+        estates = []
+        for estate in available_estates:
+            estates.append({
+                "id": estate[5],
+                "address": estate[0],
+                "square": estate[1],
+                "type": estate[2]
+            })
+        return render_template("get_estates.html", estates=estates, account=account, error=error_message)
+    except Exception as e:
+        error_message = "Ошибка получения информации о доступных недвижимостях: " + str(e)
+    return render_template("get_estates.html", account=account, error=error_message)
+
+# Страница просмотра объявлений
+@app.route("/get_ad", methods=["GET", "POST"])
+def get_ad():
+    account = request.args.get("account")
+    error_message = ""
+    if request.method == "POST":
+        try:
+            open_ads = contract.functions.getOpenAdvertisements().call()  # Вызов правильной функции
+            ads = []
+            for ad in open_ads:
+                ads.append({
+                    "id": ad[1],
+                    "price": ad[0],
+                    "type": ad[5]
+                })
+            return render_template("get_ad.html", ads=ads, account=account, error=error_message)
+        except Exception as e:
+            error_message = "Ошибка получения информации о текущих объявлениях: " + str(e)
+    return render_template("get_ad.html", account=account, error=error_message)
 
 
 
-if __name__ == '__main__':
-    main()
 
-#0x768A042bf04E6e0C7f884A92B062ed117215cf25
-#Qwerty111111!
+# Страница проверки баланса контракта
+@app.route("/get_balance")
+def get_balance():
+    account = request.args.get("account")  # Получение публичного ключа из URL
+    error_message = ""
+    try:
+        balance = contract.functions.balances(account).call()  # Вызов правильной функции
+        return render_template("get_balance.html", balance=balance, account=account, error=error_message)
+    except Exception as e:
+        error_message = "Ошибка получения баланса на контракте: " + str(e)
+    return render_template("get_balance.html", account=account, error=error_message)
+
+# Страница проверки баланса аккаунта
+@app.route("/get_account_balance")
+def get_account_balance():
+    account = request.args.get("account")  # Получение публичного ключа из URL
+    error_message = ""
+    try:
+        balance = w3.eth.get_balance(account)  # Вызов функции из контракта
+        return render_template("get_account_balance.html", balance=balance, account=account, error=error_message)
+    except Exception as e:
+        error_message = "Ошибка получения баланса на аккаунте: " + str(e)
+    return render_template("get_account_balance.html", account=account, error=error_message)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
 #0x9E7868b8f42839562a76cbA12688A4d29ca2Cf82
 #Qwerty1111111!

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Баланс контракта</title>
+    <link rel="stylesheet" href={{url_for("static", filename = "getbalance.css")}}>
+</head>
+<body>
+    <h1 class="balance-title">Баланс контракта: {{ balance }}</h1>
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+</body>
+</html>

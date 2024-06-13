@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Создание объявления</title>
+    <link rel="stylesheet" href={{url_for("static", filename = "createad.css")}}>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Создать объявление</h1>
+        <form method="post" class="form">
+            <input type="hidden" name="account" value="{{ account }}">
+            <div class="form-group">
+                <label for="price" class="label">Цена:</label>
+                <input type="number" id="price" name="price" class="input">
+            </div>
+            <div class="form-group">
+                <label for="idEstate" class="label">ID недвижимости:</label>
+                <input type="number" id="idEstate" name="idEstate" class="input">
+            </div>
+            <button type="submit" name="action" value="Создать" class="button create-button">Создать</button>
+            <button type="submit" name="action" value="Назад" class="button back-button">Назад</button>
+        </form>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>

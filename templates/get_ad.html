@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Просмотр объявлений</title>
+    <link rel="stylesheet" href={{url_for("static", filename = "getad.css")}}>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Текущие объявления</h1>
+        <ul class="ads-list">
+            {% for ad in ads %}
+                <li class="ad-item">
+                    <span class="ad-id">ID: {{ ad.id }}</span><br>
+                    <span class="ad-price">Цена: {{ ad.price }}</span><br>
+                    <span class="ad-type">Тип: {{ ad.type }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>

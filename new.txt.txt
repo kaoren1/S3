@@ -4,7 +4,7 @@ geth init --datadir data genesis.json - создание генезис блок
 
 geth --datadir data --networkid 150220241016 --unlock 0xb6C02cfCc416017eEEC2F480a29203d3719CFe47 --allow-insecure-unlock --http --http.corsdomain="*" --http.api web3,eth,debug,personal,net,miner --miner.etherbase 0xb6C02cfCc416017eEEC2F480a29203d3719CFe47 - запуск чатсной сети блокчейна
 geth attach --datadir data ipc:\\.\pipe\geth.ipc - создание отдельной консоли geth для того, чтобы управлять процессами в блокчейне
-    eth.blockNumber - номер блока
+eth.blockNumber - номер блока
 
 0xb6C02cfCc416017eEEC2F480a29203d3719CFe47
 0x21a4B4Da72EAe9E579D8461aB4E729349B39c38C

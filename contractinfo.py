@@ -1,6 +1,223 @@
 abi = """
 [
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "host",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "IdAd",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "date",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "price",
+				"type": "uint256"
+			}
+		],
+		"name": "createdAd",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "host",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "date",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "enum EstateAgency.estateType",
+				"name": "Type",
+				"type": "uint8"
+			}
+		],
+		"name": "createdEstate",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "host",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "buyer",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "IdAd",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "IdEstate",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "enum EstateAgency.advertisemntType",
+				"name": "adType",
+				"type": "uint8"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "date",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "price",
+				"type": "uint256"
+			}
+		],
+		"name": "estatePurchased",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "host",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "price",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "date",
+				"type": "uint256"
+			}
+		],
+		"name": "fundsBack",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "host",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "date",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "enum EstateAgency.advertisemntType",
+				"name": "Type",
+				"type": "uint8"
+			}
+		],
+		"name": "updatedAdType",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "host",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "IdEstate",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "IdAd",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "date",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "enum EstateAgency.advertisemntType",
+				"name": "Type",
+				"type": "uint8"
+			}
+		],
+		"name": "updatedEstateActive",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "Pay",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -36,9 +253,9 @@ abi = """
 				"type": "uint256"
 			},
 			{
-				"internalType": "int256",
+				"internalType": "enum EstateAgency.advertisemntType",
 				"name": "adType",
-				"type": "int256"
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",
@@ -107,9 +324,9 @@ abi = """
 				"type": "uint256"
 			},
 			{
-				"internalType": "int256",
+				"internalType": "enum EstateAgency.estateType",
 				"name": "esType",
-				"type": "int256"
+				"type": "uint8"
 			}
 		],
 		"name": "createEstate",
@@ -138,9 +355,9 @@ abi = """
 				"type": "uint256"
 			},
 			{
-				"internalType": "int256",
+				"internalType": "enum EstateAgency.estateType",
 				"name": "esType",
-				"type": "int256"
+				"type": "uint8"
 			},
 			{
 				"internalType": "address",
@@ -193,57 +410,12 @@ abi = """
 						"type": "uint256"
 					},
 					{
-						"internalType": "int256",
+						"internalType": "enum EstateAgency.advertisemntType",
 						"name": "adType",
-						"type": "int256"
+						"type": "uint8"
 					}
 				],
 				"internalType": "struct EstateAgency.Advertisemnt[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getAvailableEstates",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "string",
-						"name": "addressEstate",
-						"type": "string"
-					},
-					{
-						"internalType": "uint256",
-						"name": "square",
-						"type": "uint256"
-					},
-					{
-						"internalType": "int256",
-						"name": "esType",
-						"type": "int256"
-					},
-					{
-						"internalType": "address",
-						"name": "owner",
-						"type": "address"
-					},
-					{
-						"internalType": "bool",
-						"name": "IsActive",
-						"type": "bool"
-					},
-					{
-						"internalType": "uint256",
-						"name": "estateId",
-						"type": "uint256"
-					}
-				],
-				"internalType": "struct EstateAgency.Estate[]",
 				"name": "",
 				"type": "tuple[]"
 			}
@@ -287,9 +459,9 @@ abi = """
 						"type": "uint256"
 					},
 					{
-						"internalType": "int256",
+						"internalType": "enum EstateAgency.estateType",
 						"name": "esType",
-						"type": "int256"
+						"type": "uint8"
 					},
 					{
 						"internalType": "address",
@@ -313,58 +485,6 @@ abi = """
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getOpenAdvertisements",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "uint256",
-						"name": "price",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "estateId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "address",
-						"name": "owner",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "buyer",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "dateTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "int256",
-						"name": "adType",
-						"type": "int256"
-					}
-				],
-				"internalType": "struct EstateAgency.Advertisemnt[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "pay",
-		"outputs": [],
-		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -422,10 +542,10 @@ abi = """
 		],
 		"name": "withdraw",
 		"outputs": [],
-		"stateMutability": "payable",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
 """
 
-contract_address = "0x75426087b8e3228FE3Bf059f142b16231861efad"
+contract_address = "0x887A3c2570c5Fd21c45b7962699eB0BA19441D71"

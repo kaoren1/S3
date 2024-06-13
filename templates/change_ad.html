@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Изменение объявления</title>
+    <link rel="stylesheet" href={{url_for("static", filename = "changead.css")}}>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Изменить объявление</h1>
+        <form method="post" class="form">
+            <input type="hidden" name="account" value="{{ account }}">
+            <div class="form-group">
+                <label for="idAD" class="label">ID объявления:</label>
+                <input type="number" id="idAD" name="idAD" class="input">
+            </div>
+            <button type="submit" name="action" value="Изменить" class="button change-button">Изменить</button>
+            <button type="submit" name="action" value="Назад" class="button back-button">Назад</button>
+        </form>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>

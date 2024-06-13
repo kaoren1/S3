@@ -1,0 +1,31 @@
+.auth-title {
+    color: #333;
+    font-size: 2.5rem;
+    text-align: center;
+}
+.auth-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.auth-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.auth-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.auth-button:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+.error {
+    color: red;
+    text-align: center;
+}

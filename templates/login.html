@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Авторизация</title>
+    <link rel="stylesheet" href={{url_for("static", filename = "login.css")}}>
+</head>
+<body>
+    <h1 class="auth-title">Авторизация</h1>
+    <form method="post" class="auth-form">
+        <label for="publicKey" class="auth-label">Публичный ключ:</label><br>
+        <input type="text" id="publicKey" name="publicKey" class="auth-input"><br><br>
+        <label for="password" class="auth-label">Пароль:</label><br>
+        <input type="password" id="password" name="password" class="auth-input"><br><br>
+        <button type="submit" name="action" value="Авторизоваться" class="auth-button">Авторизоваться</button>
+        <button type="submit" name="action" value="Назад" class="auth-button">Назад</button><br>
+    </form>
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+</body>
+</html>

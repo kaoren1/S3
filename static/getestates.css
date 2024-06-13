@@ -1,0 +1,15 @@
+.estates-title {
+    color: #333;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.estates-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.estate-item {
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+}

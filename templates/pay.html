@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Пополнить баланс</title>
+    <link rel="stylesheet" href={{url_for("static", filename = "pay.css")}}>
+</head>
+<body>
+    <h1 class="replenish-title">Пополнить баланс</h1>
+    <form method="post" class="replenish-form">
+        <input type="hidden" name="account" value="{{ account }}">
+        <label for="amount" class="replenish-label">Сумма:</label><br>
+        <input type="number" id="amount" name="amount" class="replenish-input"><br><br>
+        <button type="submit" name="action" value="Пополнить" class="replenish-button">Пополнить</button>
+        <button type="submit" name="action" value="Назад" class="replenish-button">Назад</button><br>
+    </form>
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+</body>
+</html>
